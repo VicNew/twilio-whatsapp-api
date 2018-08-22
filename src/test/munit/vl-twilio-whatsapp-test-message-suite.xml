@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="vl-twilio-whatsapp-test-message-suite.xml" />
+	<sub-flow name="getSendMessageRequest" doc:id="e0c3f7d0-5f97-4ba6-9cef-bd117c2c5421" >
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="56e2827f-7ac5-41d7-84d1-587ec841df3d" />
+		<ee:transform doc:name="Transform Message" doc:id="4767863f-9e31-4b30-bef3-ca762e4e274c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{  
+   "To":"+5214423349551",
+   "From":"+14155238886",
+   "Body":"Test message from Munit"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="getSendWhatsappMessageRequest" doc:id="d70b8d56-dd6a-4869-a5e5-6fd84cc5d0ed" >
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="e48c5242-9cf0-4671-9717-af6f9d1568e2" />
+		<ee:transform doc:name="Transform Message" doc:id="e3b657ba-44a3-4330-994e-1267e24d5e9e">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{  
+   "To":"whatsapp:+5214423349551",
+   "From":"whatsapp:+14155238886",
+   "Body":"Test message from Munit"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+	</sub-flow>
+	<sub-flow name="getTwilioResponseMessage" doc:id="17f1c35b-d3f1-4422-b216-88261337bf23" >
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="084188ea-703c-45cd-a4d7-40703648706d" />
+		<ee:transform doc:name="Transform Message" doc:id="f110e64b-659b-4e9b-98a7-e8a9a8442042">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+   "sid":"SM330d897ac94343d7b9ea7caa52a02aae",
+   "date_created":"Tue, 21 Aug 2018 03:35:55 +0000",
+   "date_updated":"Tue, 21 Aug 2018 03:35:55 +0000",
+   "date_sent":null,
+   "account_sid":"AC5e831f0f72d5487cc3b3288c46371ebd",
+   "to":"whatsapp:+5214423349551",
+   "from":"whatsapp:+14155238886",
+   "messaging_service_sid":null,
+   "body":"Test message from Munit",
+   "status":"queued",
+   "num_segments":"1",
+   "num_media":"0",
+   "direction":"outbound-api",
+   "api_version":"2010-04-01",
+   "price":null,
+   "price_unit":null,
+   "error_code":null,
+   "error_message":null,
+   "uri":"/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae.json",
+   "subresource_uris":{
+      "media":"/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae/Media.json"
+   }
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+	</sub-flow>
+	<sub-flow name="getReplyMessage" doc:id="4ccc0035-50bc-4f05-afdd-79d9f5df9014" >
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="2df75469-16dc-421f-b9b2-248ea001cef6" />
+		<ee:transform doc:name="Transform Message" doc:id="88e5468c-fac4-4141-a8ee-ae0f85cebab5">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  SmsMessageSid: "SM6c8b11b628eae4b84c554f3cb698df5a",
+  NumMedia: "0",
+  SmsSid: "SM6c8b11b628eae4b84c554f3cb698df5a",
+  SmsStatus: "received",
+  Body: "Test Response message from cell",
+  To: "whatsapp:+14155238886",
+  NumSegments: "1",
+  MessageSid: "SM6c8b11b628eae4b84c554f3cb698df5a",
+  AccountSid: "AC5e831f0f72d5487cc3b3288c46371ebd",
+  From: "whatsapp:+5214423349551",
+  ApiVersion: "2010-04-01"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+	</sub-flow>
+	<sub-flow name="getStatusMessage" doc:id="78b17842-edce-45b0-8b8a-1dd1b7e5f785" >
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="3d06bfc6-83b0-4a49-8446-074e25ef1407" />
+		<ee:transform doc:name="Transform Message" doc:id="971a56dd-418a-4309-86dc-39212ced2ad1">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  SmsMessageSid: "SM6c8b11b628eae4b84c554f3cb698df5a",
+  NumMedia: "0",
+  SmsSid: "SM6c8b11b628eae4b84c554f3cb698df5a",
+  SmsStatus: "received",
+  Body: "Test Response message from cell 2",
+  To: "whatsapp:+14155238886",
+  NumSegments: "1",
+  MessageSid: "SM6c8b11b628eae4b84c554f3cb698df5a",
+  AccountSid: "AC5e831f0f72d5487cc3b3288c46371ebd",
+  From: "whatsapp:+5214423349551",
+  ApiVersion: "2010-04-01"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+	</sub-flow>
+
+
+</mule>

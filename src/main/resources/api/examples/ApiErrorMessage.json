@@ -1,0 +1,22 @@
+{
+   "error":{
+      "errors":[
+         {
+            "id":"error1_firstName",
+            "code":"XB500",
+            "status":"4XX",
+            "title":"Error Title 1",
+            "detail":"Verbose,plain language description of the problem for the app developer with hints about how to fix it.",
+            "href":"https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html"
+         },
+         {
+            "id":"error2_firstName",
+            "code":"XB501",
+            "status":"4XX",
+            "title":"Error Title 2",
+            "detail":"Verbose,plain language description of the problem for the app developer with hints about how to fix it.",
+            "href":"https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html"
+         }
+      ]
+   }
+}

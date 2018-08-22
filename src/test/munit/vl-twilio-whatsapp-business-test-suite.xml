@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="vl-twilio-whatsapp-business-test-suite.xml" />
+	<munit:test name="Test_GivenASendMessageWhenBuildSendWhatsappMessageThenReturnAWhatsappMessage" description="Test_GivenASendMessageWhenBuildSendWhatsappMessageThenReturnAWhatsappMessage" doc:id="69255b3a-5c3d-4e20-be14-fca0263bd495" >
+		<munit:execution >
+			<flow-ref doc:name="getSendMessageRequest" doc:id="c21f975d-bb25-4943-a98f-8210fdcf7c73" name="getSendMessageRequest"/>
+			<flow-ref doc:name="buildSendWhatsappMessageRequest" doc:id="d09180f0-aa0d-48ac-a8c6-04bbf7d327d8" name="buildSendWhatsappMessageRequest"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that Whatsapp is not Null" doc:id="c3962377-ec8c-48c0-a633-246e272f2eda" expression="#[payload]" is="#[MunitTools::notNullValue()]" message="Payload is null!!!"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Test_GivenASendMessageWhenBuildSendWhatsappMessageThenReturnAValidWhatsappMessage" description="Test_GivenASendMessageWhenBuildSendWhatsappMessageThenReturnAValidWhatsappMessage" doc:id="69255b3a-5c3d-4e20-be14-fca0263bd495" >
+		<munit:execution >
+			<flow-ref doc:name="getSendMessageRequest" doc:id="39393a92-b541-4eac-a3a2-b3d5cd003b4a" name="getSendMessageRequest" />
+			<ee:transform doc:name="expected Whatsapp Message" doc:id="6907d8af-0ada-4393-9743-41f5ab15c864" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="expectedWhatsappMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+{  
+   "To":"whatsapp:+5214423349551",
+   "From":"whatsapp:+14155238886",
+   "Body":"Test message from Munit"
+}]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<flow-ref doc:name="buildSendWhatsappMessageRequest" doc:id="d09180f0-aa0d-48ac-a8c6-04bbf7d327d8" name="buildSendWhatsappMessageRequest"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that Whatsapp is the expected Message Format" doc:id="c3962377-ec8c-48c0-a633-246e272f2eda" expression="#[payload]" is="#[MunitTools::equalTo(vars.expectedWhatsappMessage default '')]" message="Payload is null!!!"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Test_GivenASendMessageWhenBuildSendWhatsappMessageThenCallWhatsappMessageTransform" description="Test_GivenASendMessageWhenBuildSendWhatsappMessageThenCallWhatsappMessageTransform" doc:id="69255b3a-5c3d-4e20-be14-fca0263bd495" >
+		<munit:execution >
+			<flow-ref doc:name="getSendMessageRequest" doc:id="39393a92-b541-4eac-a3a2-b3d5cd003b4a" name="getSendMessageRequest" />
+			<ee:transform doc:name="expected Whatsapp Message" doc:id="6907d8af-0ada-4393-9743-41f5ab15c864" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="expectedWhatsappMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+{  
+   "To":"whatsapp:+5214423349551",
+   "From":"whatsapp:+14155238886",
+   "Body":"Test message from Munit"
+}]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<flow-ref doc:name="buildSendWhatsappMessageRequest" doc:id="d09180f0-aa0d-48ac-a8c6-04bbf7d327d8" name="buildSendWhatsappMessageRequest"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call Whatsapp Message Transform" doc:id="0631c526-58c8-4254-add2-d616fa591850" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="doc:name" whereValue="Transform Whatsapp Message" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		
+</munit:validation>
+	</munit:test>
+	<munit:test name="Test_GivenASendWhatsappMessageRequestWhenCallTwilioToSendWhatsappMessageThenReturnAResponse" description="Test_GivenASendWhatsappMessageRequestWhenCallTwilioToSendWhatsappMessageThenReturnAResponse" doc:id="cbba7053-4e32-4dca-bb58-67a6e0e56985" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when Call TwilioSendWhatsappMessage" doc:id="0e9b7cee-2df1-4d02-9d1a-a01cbc78dceb" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="doc:name" whereValue="TwilioSendWhatsappMessage" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['{&quot;sid&quot;: &quot;SM330d897ac94343d7b9ea7caa52a02aae&quot;, &quot;date_created&quot;: &quot;Tue, 21 Aug 2018 03:35:55 +0000&quot;, &quot;date_updated&quot;: &quot;Tue, 21 Aug 2018 03:35:55 +0000&quot;, &quot;date_sent&quot;: null, &quot;account_sid&quot;: &quot;AC5e831f0f72d5487cc3b3288c46371ebd&quot;, &quot;to&quot;: &quot;whatsapp:+5214423349551&quot;, &quot;from&quot;: &quot;whatsapp:+14155238886&quot;, &quot;messaging_service_sid&quot;: null, &quot;body&quot;: &quot;Test message from Munit&quot;, &quot;status&quot;: &quot;queued&quot;, &quot;num_segments&quot;: &quot;1&quot;, &quot;num_media&quot;: &quot;0&quot;, &quot;direction&quot;: &quot;outbound-api&quot;, &quot;api_version&quot;: &quot;2010-04-01&quot;, &quot;price&quot;: null, &quot;price_unit&quot;: null, &quot;error_code&quot;: null, &quot;error_message&quot;: null, &quot;uri&quot;: &quot;/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae.json&quot;, &quot;subresource_uris&quot;: {&quot;media&quot;: &quot;/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae/Media.json&quot;}}']" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="getSendWhatsappMessageRequest" doc:id="007356e3-1809-4eaa-a0e8-869d9e68f90a" name="getSendWhatsappMessageRequest" />
+			<flow-ref doc:name="callTwilioToSendWhatsappMessage" doc:id="5dfaff11-1b6b-481b-9b6b-a0e20c1a4eae" name="callTwilioToSendWhatsappMessage"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that Twilio Response is not Null" doc:id="4b401fce-cfa9-40a8-be2e-caf09dbd9eed" expression="#[payload]" is="#[MunitTools::notNullValue()]" message="Twilio Response is null!!!"/>
+			<munit-tools:verify-call doc:name="Verify call TwilioSendWhatsappMessage" doc:id="f5d94a9b-f1b2-4cea-a8db-3e6ded362a26" processor="http:request" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="doc:name" whereValue="TwilioSendWhatsappMessage" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Test_GivenASendWhatsappMessageRequestWhenCallTwilioToSendWhatsappMessageThenReturnAValidResponse" description="Test_GivenASendWhatsappMessageRequestWhenCallTwilioToSendWhatsappMessageThenReturnAValidResponse" doc:id="cbba7053-4e32-4dca-bb58-67a6e0e56985" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when Call TwilioSendWhatsappMessage" doc:id="0e9b7cee-2df1-4d02-9d1a-a01cbc78dceb" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="doc:name" whereValue="TwilioSendWhatsappMessage" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['{&quot;sid&quot;: &quot;SM330d897ac94343d7b9ea7caa52a02aae&quot;, &quot;date_created&quot;: &quot;Tue, 21 Aug 2018 03:35:55 +0000&quot;, &quot;date_updated&quot;: &quot;Tue, 21 Aug 2018 03:35:55 +0000&quot;, &quot;date_sent&quot;: null, &quot;account_sid&quot;: &quot;AC5e831f0f72d5487cc3b3288c46371ebd&quot;, &quot;to&quot;: &quot;whatsapp:+5214423349551&quot;, &quot;from&quot;: &quot;whatsapp:+14155238886&quot;, &quot;messaging_service_sid&quot;: null, &quot;body&quot;: &quot;Test message from Munit&quot;, &quot;status&quot;: &quot;queued&quot;, &quot;num_segments&quot;: &quot;1&quot;, &quot;num_media&quot;: &quot;0&quot;, &quot;direction&quot;: &quot;outbound-api&quot;, &quot;api_version&quot;: &quot;2010-04-01&quot;, &quot;price&quot;: null, &quot;price_unit&quot;: null, &quot;error_code&quot;: null, &quot;error_message&quot;: null, &quot;uri&quot;: &quot;/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae.json&quot;, &quot;subresource_uris&quot;: {&quot;media&quot;: &quot;/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae/Media.json&quot;}}']" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="getSendWhatsappMessageRequest" doc:id="007356e3-1809-4eaa-a0e8-869d9e68f90a" name="getSendWhatsappMessageRequest" />
+			<ee:transform doc:name="set Expected Whatsapp Message Response" doc:id="cc9d9352-b879-452d-9806-be01f0a6034e">
+				<ee:message>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="expectedWhatsappMessageResponse"><![CDATA[%dw 2.0
+output application/java
+---
+{
+   "sid":"SM330d897ac94343d7b9ea7caa52a02aae",
+   "date_created":"Tue, 21 Aug 2018 03:35:55 +0000",
+   "date_updated":"Tue, 21 Aug 2018 03:35:55 +0000",
+   "date_sent":null,
+   "account_sid":"AC5e831f0f72d5487cc3b3288c46371ebd",
+   "to":"whatsapp:+5214423349551",
+   "from":"whatsapp:+14155238886",
+   "messaging_service_sid":null,
+   "body":"Test message from Munit",
+   "status":"queued",
+   "num_segments":"1",
+   "num_media":"0",
+   "direction":"outbound-api",
+   "api_version":"2010-04-01",
+   "price":null,
+   "price_unit":null,
+   "error_code":null,
+   "error_message":null,
+   "uri":"/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae.json",
+   "subresource_uris":{
+      "media":"/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae/Media.json"
+   }
+}]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<flow-ref doc:name="callTwilioToSendWhatsappMessage" doc:id="5dfaff11-1b6b-481b-9b6b-a0e20c1a4eae" name="callTwilioToSendWhatsappMessage"/>
+		
+</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that is the expected Twilio Response" doc:id="4b401fce-cfa9-40a8-be2e-caf09dbd9eed" expression="#[payload]" is="#[MunitTools::equalTo(vars.expectedWhatsappMessageResponse default '')]" message="Twilio Response is the expected!!!"/>
+			<munit-tools:verify-call doc:name="Verify call TwilioSendWhatsappMessage" doc:id="f5d94a9b-f1b2-4cea-a8db-3e6ded362a26" processor="http:request" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="doc:name" whereValue="TwilioSendWhatsappMessage" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Test_GivenASendWhatsappMessageRequestWhenCallTwilioToSendWhatsappMessageThenReceiveAValidRequest" description="Test_GivenASendWhatsappMessageRequestWhenCallTwilioToSendWhatsappMessageThenReceiveAValidRequest" doc:id="cbba7053-4e32-4dca-bb58-67a6e0e56985" >
+		<munit:behavior >
+			<munit-tools:spy doc:name="Spy TwilioSendWhatsappMessage Call" doc:id="71542702-d021-4185-9e29-fe1a6221a9ca" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="doc:name" whereValue="TwilioSendWhatsappMessage" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call>
+					<logger level="INFO" doc:name="Logger" doc:id="8edfffdc-73ca-41d7-bcb9-676faa688aa8" message="&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;Request: #[payload]" />
+					<munit-tools:assert-that doc:name="Assert that" doc:id="388609f3-040f-454f-86c4-3706c1d34a76" expression="#[payload]" is='#[MunitTools::equalTo({"To":"whatsapp:+5214423349551","From":"whatsapp:+14155238886","Body":"Test message from Munit"})]'/>
+				</munit-tools:before-call>
+			</munit-tools:spy>
+			<munit-tools:mock-when doc:name="Mock when Call TwilioSendWhatsappMessage" doc:id="0e9b7cee-2df1-4d02-9d1a-a01cbc78dceb" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="doc:name" whereValue="TwilioSendWhatsappMessage" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['{&quot;sid&quot;: &quot;SM330d897ac94343d7b9ea7caa52a02aae&quot;, &quot;date_created&quot;: &quot;Tue, 21 Aug 2018 03:35:55 +0000&quot;, &quot;date_updated&quot;: &quot;Tue, 21 Aug 2018 03:35:55 +0000&quot;, &quot;date_sent&quot;: null, &quot;account_sid&quot;: &quot;AC5e831f0f72d5487cc3b3288c46371ebd&quot;, &quot;to&quot;: &quot;whatsapp:+5214423349551&quot;, &quot;from&quot;: &quot;whatsapp:+14155238886&quot;, &quot;messaging_service_sid&quot;: null, &quot;body&quot;: &quot;Test message from Munit&quot;, &quot;status&quot;: &quot;queued&quot;, &quot;num_segments&quot;: &quot;1&quot;, &quot;num_media&quot;: &quot;0&quot;, &quot;direction&quot;: &quot;outbound-api&quot;, &quot;api_version&quot;: &quot;2010-04-01&quot;, &quot;price&quot;: null, &quot;price_unit&quot;: null, &quot;error_code&quot;: null, &quot;error_message&quot;: null, &quot;uri&quot;: &quot;/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae.json&quot;, &quot;subresource_uris&quot;: {&quot;media&quot;: &quot;/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae/Media.json&quot;}}']" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="getSendWhatsappMessageRequest" doc:id="007356e3-1809-4eaa-a0e8-869d9e68f90a" name="getSendWhatsappMessageRequest" />
+			<flow-ref doc:name="callTwilioToSendWhatsappMessage" doc:id="5dfaff11-1b6b-481b-9b6b-a0e20c1a4eae" name="callTwilioToSendWhatsappMessage"/>
+		
+</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call TwilioSendWhatsappMessage" doc:id="f5d94a9b-f1b2-4cea-a8db-3e6ded362a26" processor="http:request" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="doc:name" whereValue="TwilioSendWhatsappMessage" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Test_GivenASendWhatsappMessageRequestWhenCallTwilioToSendWhatsappMessageThenHttpRequestIsWellConfigured" description="Test_GivenASendWhatsappMessageRequestWhenCallTwilioToSendWhatsappMessageThenHttpRequestIsWellConfigured" doc:id="cbba7053-4e32-4dca-bb58-67a6e0e56985" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when Call TwilioSendWhatsappMessage" doc:id="0e9b7cee-2df1-4d02-9d1a-a01cbc78dceb" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="doc:name" whereValue="TwilioSendWhatsappMessage" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['{&quot;sid&quot;: &quot;SM330d897ac94343d7b9ea7caa52a02aae&quot;, &quot;date_created&quot;: &quot;Tue, 21 Aug 2018 03:35:55 +0000&quot;, &quot;date_updated&quot;: &quot;Tue, 21 Aug 2018 03:35:55 +0000&quot;, &quot;date_sent&quot;: null, &quot;account_sid&quot;: &quot;AC5e831f0f72d5487cc3b3288c46371ebd&quot;, &quot;to&quot;: &quot;whatsapp:+5214423349551&quot;, &quot;from&quot;: &quot;whatsapp:+14155238886&quot;, &quot;messaging_service_sid&quot;: null, &quot;body&quot;: &quot;Test message from Munit&quot;, &quot;status&quot;: &quot;queued&quot;, &quot;num_segments&quot;: &quot;1&quot;, &quot;num_media&quot;: &quot;0&quot;, &quot;direction&quot;: &quot;outbound-api&quot;, &quot;api_version&quot;: &quot;2010-04-01&quot;, &quot;price&quot;: null, &quot;price_unit&quot;: null, &quot;error_code&quot;: null, &quot;error_message&quot;: null, &quot;uri&quot;: &quot;/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae.json&quot;, &quot;subresource_uris&quot;: {&quot;media&quot;: &quot;/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae/Media.json&quot;}}']" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="getSendWhatsappMessageRequest" doc:id="007356e3-1809-4eaa-a0e8-869d9e68f90a" name="getSendWhatsappMessageRequest" />
+			<flow-ref doc:name="callTwilioToSendWhatsappMessage" doc:id="5dfaff11-1b6b-481b-9b6b-a0e20c1a4eae" name="callTwilioToSendWhatsappMessage"/>
+		
+</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call TwilioSendWhatsappMessage" doc:id="f5d94a9b-f1b2-4cea-a8db-3e6ded362a26" processor="http:request" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="doc:name" whereValue="TwilioSendWhatsappMessage" />
+					<munit-tools:with-attribute attributeName="method" whereValue="POST" />
+					<munit-tools:with-attribute attributeName="config-ref" whereValue="HTTP_Twilio_Request_configuration" />
+					<munit-tools:with-attribute attributeName="path" whereValue="/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages.json" />
+				
+</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

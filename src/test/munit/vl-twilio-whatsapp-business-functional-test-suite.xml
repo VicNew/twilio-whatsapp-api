@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="vl-twilio-whatsapp-business-functional-test-suite.xml" />
+	<munit:test name="FunctionalTest_GivenASendWhatsappMessageRequestWhenCallTwilioToSendWhatsappMessageThenReturnAResponse" description="FunctionalTest_GivenASendWhatsappMessageRequestWhenCallTwilioToSendWhatsappMessageThenReturnAResponse" doc:id="6ee751df-a9a6-4ddb-ba22-fe55dec3a70f" ignore="true">
+		<munit:execution >
+			<set-payload value="#[payload]" doc:name="Set Payload" doc:id="7d338273-1d7e-4a71-a313-30817c2ba2e4" />
+			<ee:transform doc:name="Transform Message" doc:id="9eabde07-8f96-4cb0-b719-1a2c2c8a863f" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{  
+   "To":"whatsapp:+5214423349551",
+   "From":"whatsapp:+14155238886",
+   "Body":"Test message from Munit"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<flow-ref doc:name="callTwilioToSendWhatsappMessage" doc:id="630dc8e4-dcad-41da-b39b-735c9f963284" name="callTwilioToSendWhatsappMessage"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that Twilio Response is not Null" doc:id="a276f038-d0ab-4bbf-93f4-26777d2ebc56" expression="#[payload]" is="#[MunitTools::notNullValue()]" message="Twilio Response is null!!!"/>
+			<munit-tools:verify-call doc:name="Verify call TwilioSendWhatsappMessage" doc:id="9e4d225e-dbab-4f98-a446-8db646eea445" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="doc:name" whereValue="TwilioSendWhatsappMessage" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

@@ -1,0 +1,44 @@
+{
+  "definitions": {}, 
+  "$schema": "http://json-schema.org/draft-07/schema#", 
+  "$id": "http://newtoms.example.com/root.json", 
+  "type": "object", 
+  "title": "The Root Schema", 
+  "required": [
+    "To", 
+    "From", 
+    "Body"
+  ], 
+  "properties": {
+    "To": {
+      "$id": "#/properties/To", 
+      "type": "string", 
+      "title": "The To Schema", 
+      "default": "", 
+      "examples": [
+        "+5214423349551"
+      ], 
+      "pattern": "^(.*)$"
+    }, 
+    "From": {
+      "$id": "#/properties/From", 
+      "type": "string", 
+      "title": "The From Schema", 
+      "default": "", 
+      "examples": [
+        "+14155238886"
+      ], 
+      "pattern": "^(.*)$"
+    }, 
+    "Body": {
+      "$id": "#/properties/Body", 
+      "type": "string", 
+      "title": "The Body Schema", 
+      "default": "", 
+      "examples": [
+        "Test message from Mule"
+      ], 
+      "pattern": "^(.*)$"
+    }
+  }
+}

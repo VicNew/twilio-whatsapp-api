@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<types:mule xmlns:types="http://www.mulesoft.org/schema/mule/types">
+  <types:catalog>
+    <types:type name="SendMessageRequest" format="json">
+      <types:example format="json" location="api/examples/SendMessageRequest.json"/>
+    </types:type>
+  </types:catalog>
+  <types:enrichment select="#dd6c35db-e4dc-449a-bf9e-26c950a6b09b">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="SendMessageRequest"/>
+        </types:message>
+      </types:input-event>
+      <types:output-event>
+        <types:message>
+          <types:payload type="SendMessageRequest"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+</types:mule>

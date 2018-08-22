@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="buildSendWhatsappMessageRequest" doc:id="49ea9a39-8173-4b01-8509-e8ae49c3efc3" >
+		<ee:transform doc:name="Transform Whatsapp Message" doc:id="dd6c35db-e4dc-449a-bf9e-26c950a6b09b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	To: ("whatsapp:"default "") ++ (payload.To default ""),
+	From: ("whatsapp:"default "") ++ (payload.From default ""),
+	Body: payload.Body
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="callTwilioToSendWhatsappMessage" doc:id="7575052e-a9e8-4636-8b22-bc9d0d694db2" >
+		<http:request method="POST" doc:name="TwilioSendWhatsappMessage" doc:id="b058af78-6fee-4376-874f-abb0724e7ac7" config-ref="HTTP_Twilio_Request_configuration" path="/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages.json">
+			<http:body ><![CDATA[#[output application/x-www-form-urlencoded --- payload]]]></http:body>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="2470b0f2-8f75-45ab-8979-3bfa4bcaef24" message="Response: #[payload]"/>
+	</sub-flow>
+</mule>

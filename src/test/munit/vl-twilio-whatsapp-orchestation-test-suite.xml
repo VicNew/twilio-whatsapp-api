@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:munit="http://www.mulesoft.org/schema/mule/munit"
+	xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="vl-twilio-whatsapp-orchestation-test-suite.xml" />
+	<munit:test name="Test_GivenATwilioResponseMessageWhenBuildResponseMessageThenReturnAMessage" description="Test_GivenATwilioResponseMessageWhenBuildResponseMessageThenReturnAMessage" doc:id="b6d33c51-e4c2-4c75-8600-e2f05d297d90" >
+		<munit:execution >
+			<flow-ref doc:name="getTwilioResponseMessage" doc:id="4a737341-479f-49fb-ab00-15b657a3611c" name="getTwilioResponseMessage"/>
+			<flow-ref doc:name="Flow-ref to buildResponseMessage" doc:id="c2556b02-70b9-419c-8b2c-55b6ccc411da" name="buildResponseMessage"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that Response Message is Not Null" doc:id="2c32ab4d-9e77-4d7b-945a-58b93ae41d40" expression="#[payload]" is="#[MunitTools::notNullValue()]" message="Response Message is Null!!"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Test_GivenATwilioResponseMessageWhenBuildResponseMessageThenReturnAValidMessage" description="Test_GivenATwilioResponseMessageWhenBuildResponseMessageThenReturnAValidMessage" doc:id="b6d33c51-e4c2-4c75-8600-e2f05d297d90" >
+		<munit:execution >
+			<flow-ref doc:name="getTwilioResponseMessage" doc:id="943e9536-6b6c-4d13-9458-62371aff4bea" name="getTwilioResponseMessage" />
+			<ee:transform doc:name="set Expected Response Message" doc:id="58e1a97d-7dee-47d5-b995-bafc70fbbdd2" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="expectedResponseMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+{
+  response: "The message was created"
+}]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<flow-ref doc:name="Flow-ref to buildResponseMessage" doc:id="c2556b02-70b9-419c-8b2c-55b6ccc411da" name="buildResponseMessage"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that Response Message is the expected" doc:id="2c32ab4d-9e77-4d7b-945a-58b93ae41d40" expression="#[payload]" is="#[MunitTools::equalTo(vars.expectedResponseMessage default '')]" message="Response Message is not the expected"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Test_GivenASendMessageRequestWhenCallSendMessageThenReturnAResponseMessage" description="Test_GivenASendMessageRequestWhenCallSendMessageThenReturnAResponseMessage" doc:id="e258b44b-61c7-4933-9472-ed877cb2339d" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when call buildSendWhatsappMessageRequest" doc:id="faede196-3dc4-4022-a050-286cd5c8333c" processor="mule:flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="name" whereValue="buildSendWhatsappMessageRequest" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['{&quot;To&quot;:&quot;whatsapp:+5214423349551&quot;,&quot;From&quot;:&quot;whatsapp:+14155238886&quot;,&quot;Body&quot;:&quot;Test message from Munit&quot;}']" mediaType="application/json"/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when call callTwilioToSendWhatsappMessage" doc:id="cb7e38c8-9339-4812-9362-7f0e11fb0079" processor="mule:flow-ref" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="name" whereValue="callTwilioToSendWhatsappMessage" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['{&quot;sid&quot;: &quot;SM330d897ac94343d7b9ea7caa52a02aae&quot;, &quot;date_created&quot;: &quot;Tue, 21 Aug 2018 03:35:55 +0000&quot;, &quot;date_updated&quot;: &quot;Tue, 21 Aug 2018 03:35:55 +0000&quot;, &quot;date_sent&quot;: null, &quot;account_sid&quot;: &quot;AC5e831f0f72d5487cc3b3288c46371ebd&quot;, &quot;to&quot;: &quot;whatsapp:+5214423349551&quot;, &quot;from&quot;: &quot;whatsapp:+14155238886&quot;, &quot;messaging_service_sid&quot;: null, &quot;body&quot;: &quot;Test message from Munit&quot;, &quot;status&quot;: &quot;queued&quot;, &quot;num_segments&quot;: &quot;1&quot;, &quot;num_media&quot;: &quot;0&quot;, &quot;direction&quot;: &quot;outbound-api&quot;, &quot;api_version&quot;: &quot;2010-04-01&quot;, &quot;price&quot;: null, &quot;price_unit&quot;: null, &quot;error_code&quot;: null, &quot;error_message&quot;: null, &quot;uri&quot;: &quot;/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae.json&quot;, &quot;subresource_uris&quot;: {&quot;media&quot;: &quot;/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae/Media.json&quot;}}']" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when call buildResponseMessage" doc:id="0345b952-b0c5-41b8-94a5-83fee4e3cf8a" processor="mule:flow-ref" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="name" whereValue="buildResponseMessage" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['{&quot;response&quot;: &quot;The message was created&quot;}']" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="getSendMessageRequest" doc:id="235e4fc0-535a-4381-b13c-a22513e43cf9" name="getSendMessageRequest"/>
+			<flow-ref doc:name="Flow-ref to sendMessage" doc:id="9cc7ea0c-b0b8-444c-8335-9a652ccd97cc" name="sendMessage"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that Response Message is Not Null" doc:id="78c18f43-02c9-4dfc-9d38-8e4d30a5e8e4" expression="#[payload]" is="#[MunitTools::notNullValue()]" message="Response Message is Null!!" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Test_GivenASendMessageRequestWhenCallSendMessageThenCallBuildSendWhatsappMessageRequest" description="Test_GivenASendMessageRequestWhenCallSendMessageThenCallBuildSendWhatsappMessageRequest" doc:id="e258b44b-61c7-4933-9472-ed877cb2339d" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when call buildSendWhatsappMessageRequest" doc:id="faede196-3dc4-4022-a050-286cd5c8333c" processor="mule:flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="name" whereValue="buildSendWhatsappMessageRequest" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['{&quot;To&quot;:&quot;whatsapp:+5214423349551&quot;,&quot;From&quot;:&quot;whatsapp:+14155238886&quot;,&quot;Body&quot;:&quot;Test message from Munit&quot;}']" mediaType="application/json"/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when call callTwilioToSendWhatsappMessage" doc:id="cb7e38c8-9339-4812-9362-7f0e11fb0079" processor="mule:flow-ref" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="name" whereValue="callTwilioToSendWhatsappMessage" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['{&quot;sid&quot;: &quot;SM330d897ac94343d7b9ea7caa52a02aae&quot;, &quot;date_created&quot;: &quot;Tue, 21 Aug 2018 03:35:55 +0000&quot;, &quot;date_updated&quot;: &quot;Tue, 21 Aug 2018 03:35:55 +0000&quot;, &quot;date_sent&quot;: null, &quot;account_sid&quot;: &quot;AC5e831f0f72d5487cc3b3288c46371ebd&quot;, &quot;to&quot;: &quot;whatsapp:+5214423349551&quot;, &quot;from&quot;: &quot;whatsapp:+14155238886&quot;, &quot;messaging_service_sid&quot;: null, &quot;body&quot;: &quot;Test message from Munit&quot;, &quot;status&quot;: &quot;queued&quot;, &quot;num_segments&quot;: &quot;1&quot;, &quot;num_media&quot;: &quot;0&quot;, &quot;direction&quot;: &quot;outbound-api&quot;, &quot;api_version&quot;: &quot;2010-04-01&quot;, &quot;price&quot;: null, &quot;price_unit&quot;: null, &quot;error_code&quot;: null, &quot;error_message&quot;: null, &quot;uri&quot;: &quot;/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae.json&quot;, &quot;subresource_uris&quot;: {&quot;media&quot;: &quot;/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae/Media.json&quot;}}']" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when call buildResponseMessage" doc:id="0345b952-b0c5-41b8-94a5-83fee4e3cf8a" processor="mule:flow-ref" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="name" whereValue="buildResponseMessage" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['{&quot;response&quot;: &quot;The message was created&quot;}']" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="getSendMessageRequest" doc:id="235e4fc0-535a-4381-b13c-a22513e43cf9" name="getSendMessageRequest"/>
+			<flow-ref doc:name="Flow-ref to sendMessage" doc:id="9cc7ea0c-b0b8-444c-8335-9a652ccd97cc" name="sendMessage"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call buildSendWhatsappMessageRequest" doc:id="07ba3f3c-5c41-49ff-a4e7-a4c8b4d8b01b" processor="mule:flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="name" whereValue="buildSendWhatsappMessageRequest" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		
+</munit:validation>
+	</munit:test>
+	<munit:test name="Test_GivenASendMessageRequestWhenCallSendMessageThenCallTwilioToSendWhatsappMessage" description="Test_GivenASendMessageRequestWhenCallSendMessageThenCallTwilioToSendWhatsappMessage" doc:id="e258b44b-61c7-4933-9472-ed877cb2339d" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when call buildSendWhatsappMessageRequest" doc:id="faede196-3dc4-4022-a050-286cd5c8333c" processor="mule:flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="name" whereValue="buildSendWhatsappMessageRequest" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['{&quot;To&quot;:&quot;whatsapp:+5214423349551&quot;,&quot;From&quot;:&quot;whatsapp:+14155238886&quot;,&quot;Body&quot;:&quot;Test message from Munit&quot;}']" mediaType="application/json"/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when call callTwilioToSendWhatsappMessage" doc:id="cb7e38c8-9339-4812-9362-7f0e11fb0079" processor="mule:flow-ref" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="name" whereValue="callTwilioToSendWhatsappMessage" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['{&quot;sid&quot;: &quot;SM330d897ac94343d7b9ea7caa52a02aae&quot;, &quot;date_created&quot;: &quot;Tue, 21 Aug 2018 03:35:55 +0000&quot;, &quot;date_updated&quot;: &quot;Tue, 21 Aug 2018 03:35:55 +0000&quot;, &quot;date_sent&quot;: null, &quot;account_sid&quot;: &quot;AC5e831f0f72d5487cc3b3288c46371ebd&quot;, &quot;to&quot;: &quot;whatsapp:+5214423349551&quot;, &quot;from&quot;: &quot;whatsapp:+14155238886&quot;, &quot;messaging_service_sid&quot;: null, &quot;body&quot;: &quot;Test message from Munit&quot;, &quot;status&quot;: &quot;queued&quot;, &quot;num_segments&quot;: &quot;1&quot;, &quot;num_media&quot;: &quot;0&quot;, &quot;direction&quot;: &quot;outbound-api&quot;, &quot;api_version&quot;: &quot;2010-04-01&quot;, &quot;price&quot;: null, &quot;price_unit&quot;: null, &quot;error_code&quot;: null, &quot;error_message&quot;: null, &quot;uri&quot;: &quot;/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae.json&quot;, &quot;subresource_uris&quot;: {&quot;media&quot;: &quot;/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae/Media.json&quot;}}']" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when call buildResponseMessage" doc:id="0345b952-b0c5-41b8-94a5-83fee4e3cf8a" processor="mule:flow-ref" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="name" whereValue="buildResponseMessage" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['{&quot;response&quot;: &quot;The message was created&quot;}']" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="getSendMessageRequest" doc:id="235e4fc0-535a-4381-b13c-a22513e43cf9" name="getSendMessageRequest"/>
+			<flow-ref doc:name="Flow-ref to sendMessage" doc:id="9cc7ea0c-b0b8-444c-8335-9a652ccd97cc" name="sendMessage"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call callTwilioToSendWhatsappMessage" doc:id="07ba3f3c-5c41-49ff-a4e7-a4c8b4d8b01b" processor="mule:flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="name" whereValue="callTwilioToSendWhatsappMessage" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		
+</munit:validation>
+	</munit:test>
+	<munit:test name="Test_GivenASendMessageRequestWhenCallSendMessageThenCallBuildResponseMessage" description="Test_GivenASendMessageRequestWhenCallSendMessageThenCallBuildResponseMessage" doc:id="e258b44b-61c7-4933-9472-ed877cb2339d" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when call buildSendWhatsappMessageRequest" doc:id="faede196-3dc4-4022-a050-286cd5c8333c" processor="mule:flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="name" whereValue="buildSendWhatsappMessageRequest" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['{&quot;To&quot;:&quot;whatsapp:+5214423349551&quot;,&quot;From&quot;:&quot;whatsapp:+14155238886&quot;,&quot;Body&quot;:&quot;Test message from Munit&quot;}']" mediaType="application/json"/>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when call callTwilioToSendWhatsappMessage" doc:id="cb7e38c8-9339-4812-9362-7f0e11fb0079" processor="mule:flow-ref" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="name" whereValue="callTwilioToSendWhatsappMessage" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['{&quot;sid&quot;: &quot;SM330d897ac94343d7b9ea7caa52a02aae&quot;, &quot;date_created&quot;: &quot;Tue, 21 Aug 2018 03:35:55 +0000&quot;, &quot;date_updated&quot;: &quot;Tue, 21 Aug 2018 03:35:55 +0000&quot;, &quot;date_sent&quot;: null, &quot;account_sid&quot;: &quot;AC5e831f0f72d5487cc3b3288c46371ebd&quot;, &quot;to&quot;: &quot;whatsapp:+5214423349551&quot;, &quot;from&quot;: &quot;whatsapp:+14155238886&quot;, &quot;messaging_service_sid&quot;: null, &quot;body&quot;: &quot;Test message from Munit&quot;, &quot;status&quot;: &quot;queued&quot;, &quot;num_segments&quot;: &quot;1&quot;, &quot;num_media&quot;: &quot;0&quot;, &quot;direction&quot;: &quot;outbound-api&quot;, &quot;api_version&quot;: &quot;2010-04-01&quot;, &quot;price&quot;: null, &quot;price_unit&quot;: null, &quot;error_code&quot;: null, &quot;error_message&quot;: null, &quot;uri&quot;: &quot;/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae.json&quot;, &quot;subresource_uris&quot;: {&quot;media&quot;: &quot;/2010-04-01/Accounts/AC5e831f0f72d5487cc3b3288c46371ebd/Messages/SM330d897ac94343d7b9ea7caa52a02aae/Media.json&quot;}}']" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock when call buildResponseMessage" doc:id="0345b952-b0c5-41b8-94a5-83fee4e3cf8a" processor="mule:flow-ref" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="name" whereValue="buildResponseMessage" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#['{&quot;response&quot;: &quot;The message was created&quot;}']" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="getSendMessageRequest" doc:id="235e4fc0-535a-4381-b13c-a22513e43cf9" name="getSendMessageRequest"/>
+			<flow-ref doc:name="Flow-ref to sendMessage" doc:id="9cc7ea0c-b0b8-444c-8335-9a652ccd97cc" name="sendMessage"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call buildResponseMessage" doc:id="07ba3f3c-5c41-49ff-a4e7-a4c8b4d8b01b" processor="mule:flow-ref" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="name" whereValue="buildResponseMessage" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		
+</munit:validation>
+	</munit:test>
+	<munit:test name="Test_GivenAReplyMessageWhenLogReplyMessageThenReturnAResponse" description="Test_GivenAReplyMessageWhenLogReplyMessageThenReturnAResponse" doc:id="8546dba1-50fc-4105-b5dd-6fec2c2525e0" >
+		<munit:execution >
+			<flow-ref doc:name="getReplyMessage" doc:id="05815ac3-8824-4794-883a-b0d49b0c3943" name="getReplyMessage" />
+			<flow-ref doc:name="Flow-ref to logReplyMessage" doc:id="14b83b2d-7016-4673-85b2-33e19e1ca6ab" name="logReplyMessage"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that Response Message is Not Null" doc:id="fa3227d6-549e-4db7-bc6a-d4c860e22ff1" expression="#[payload]" is="#[MunitTools::notNullValue()]" message="Response Message is Null!!" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Test_GivenAReplyMessageWhenLogReplyMessageThenReturnTheRequestMessageAsResponse" description="Test_GivenAReplyMessageWhenLogReplyMessageThenReturnTheRequestMessageAsResponse" doc:id="8546dba1-50fc-4105-b5dd-6fec2c2525e0" >
+		<munit:execution >
+			<flow-ref doc:name="getReplyMessage" doc:id="05815ac3-8824-4794-883a-b0d49b0c3943" name="getReplyMessage" />
+			<ee:transform doc:name="Transform Message" doc:id="48782786-d00e-4a10-ba3f-bea6072e4c50" >
+				<ee:message >
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="expectedReplyResponseMessage" ><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<flow-ref doc:name="Flow-ref to logReplyMessage" doc:id="14b83b2d-7016-4673-85b2-33e19e1ca6ab" name="logReplyMessage"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that Response Message is the expected" doc:id="6785da2e-9dab-4c7f-ac43-f8d378290607" expression="#[payload]" is="#[MunitTools::equalTo(vars.expectedReplyResponseMessage default '')]" message="Response Message is not the expected" />
+		
+</munit:validation>
+	</munit:test>
+	<munit:test name="Test_GivenAStatusMessageWhenLogStatusMessageThenReturnAResponseMessage" description="Test_GivenAStatusMessageWhenLogStatusMessageThenReturnAResponseMessage" doc:id="7e214fd1-0c4a-4d16-8c5e-bcf469cfcd91" >
+		<munit:execution >
+			<flow-ref doc:name="getStatusMessage" doc:id="59c26574-611b-43fc-b8f7-75cf4dac00f8" name="getStatusMessage" />
+			<flow-ref doc:name="Flow-ref to logStatusMessage" doc:id="7d3e2b11-854a-4b63-84b1-323201863faf" name="logStatusMessage"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that Response Message is Not Null" doc:id="41bf421b-e363-4cd3-b49b-ab852aae3087" expression="#[payload]" is="#[MunitTools::notNullValue()]" message="Response Message is Null!!" />
+		</munit:validation>
+	</munit:test>
+	<munit:test name="Test_GivenAStatusMessageWhenLogStatusMessageThenReturnTheRequestMessageAsResponse" description="Test_GivenAStatusMessageWhenLogStatusMessageThenReturnTheRequestMessageAsResponse" doc:id="7e214fd1-0c4a-4d16-8c5e-bcf469cfcd91" >
+		<munit:execution >
+			<flow-ref doc:name="getStatusMessage" doc:id="59c26574-611b-43fc-b8f7-75cf4dac00f8" name="getStatusMessage" />
+			<ee:transform doc:name="set expected Status Response Message" doc:id="baf31265-8567-4676-a74e-8d5db7b98276">
+				<ee:message>
+				</ee:message>
+				<ee:variables>
+					<ee:set-variable variableName="expectedStatusResponseMessage"><![CDATA[%dw 2.0
+output application/java
+---
+payload]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<flow-ref doc:name="Flow-ref to logStatusMessage" doc:id="7d3e2b11-854a-4b63-84b1-323201863faf" name="logStatusMessage"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that Response Message is the expected" doc:id="b42ab4bb-630f-403e-8e8a-681195ba1855" expression="#[payload]" is="#[MunitTools::equalTo(vars.expectedStatusResponseMessage default '')]" message="Response Message is not the expected" />
+		
+</munit:validation>
+	</munit:test>
+
+
+</mule>

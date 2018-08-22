@@ -1,0 +1,13 @@
+{
+   "SmsMessageSid":"SM6c8b11b628eae4b84c554f3cb698df5a",
+   "NumMedia":"0",
+   "SmsSid":"SM6c8b11b628eae4b84c554f3cb698df5a",
+   "SmsStatus":"received",
+   "Body":"Test Response message from cell 2",
+   "To":"whatsapp:+14155238886",
+   "NumSegments":"1",
+   "MessageSid":"SM6c8b11b628eae4b84c554f3cb698df5a",
+   "AccountSid":"AC5e831f0f72d5487cc3b3288c46371ebd",
+   "From":"whatsapp:+5214423349551",
+   "ApiVersion":"2010-04-01"
+}

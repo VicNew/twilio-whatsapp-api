@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="sendMessage" doc:id="55407f3e-73c4-4ba1-aa94-b8e2eed8c0bb" >
+		<flow-ref doc:name="buildSendWhatsappMessageRequest" doc:id="cbc80254-6a96-4644-ac44-9ad81255b44d" name="buildSendWhatsappMessageRequest"/>
+		<flow-ref doc:name="callTwilioToSendWhatsappMessage" doc:id="91cff3a9-d43d-4361-ab58-667404212f4f" name="callTwilioToSendWhatsappMessage"/>
+		<flow-ref doc:name="buildResponseMessage" doc:id="baf83a70-e66d-4ead-a401-faad308ad180" name="buildResponseMessage" />
+	</sub-flow>
+	<sub-flow name="buildResponseMessage" doc:id="afc26353-98cc-4377-855b-735763553334">
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="1d301725-874c-4ad5-b04e-774b5b7310c1">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  response: "The message was created"
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+	</sub-flow>
+	<sub-flow name="logReplyMessage" doc:id="0f3a7cc0-792a-43bf-9253-f73f4b513617" >
+		<logger level="INFO" doc:name="Logger Reply Message" doc:id="aa3c3db0-ebe2-419f-a068-52cfe7d0b570" message="Reply Message: #[payload]"/>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="afad4e73-9284-4e90-90ca-55e4aee624e5">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+	</sub-flow>
+	<sub-flow name="logStatusMessage" doc:id="815ef4ee-73b6-40d3-ad6d-fc860e86b446" >
+		<logger level="INFO" doc:name="Logger Status Message" doc:id="aa4cf125-34d5-4a76-b5f7-0b8b310b457e" message="Status Message: #[payload]"/>
+		<ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="6050a99f-554a-44f9-ba88-57117930218f">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+	</sub-flow>
+</mule>

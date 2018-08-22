@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<munit:config name="vl-twilio-whatsapp-experience-api-integration-test-suite.xml" />
+	<sub-flow name="getIntTestSendMessageRequest" doc:id="ec20f13c-b8b9-4f9a-8fa7-2591ffd3ca2a" >
+		<set-payload value="#[payload]" doc:name="Set Payload" doc:id="8ad1ef6b-fca8-4d2c-ab4d-9c607e73bbac" />
+		<ee:transform doc:name="Transform Message" doc:id="286d3b3f-402c-4a5b-8e4c-da009debbae7">
+				<ee:message>
+					<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{  
+   "To":"+5214423349551",
+   "From":"+14155238886",
+   "Body":"Test message from Integration Munit Test"
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+	</sub-flow>
+	<munit:test name="IntegrationTest_GivenASendMessageRequestWhenPostAWhatsappMessageThenReturnAValidResponse" description="IntegrationTest_GivenASendMessageRequestWhenPostAWhatsappMessageThenReturnAValidResponse" doc:id="acd1234b-bd5f-4c4f-9c37-01a773057707" ignore="true">
+		<munit:enable-flow-sources >
+			<munit:enable-flow-source value="vl-twilio-whatsapp-experience-api-main" />
+			<munit:enable-flow-source value="post:\whatsapp\message:application\json:vl-twilio-whatsapp-experience-api-config" />
+		</munit:enable-flow-sources>
+		<munit:execution >
+			<flow-ref doc:name="getIntTestSendMessageRequest" doc:id="398545e3-34b9-4bcb-8dc6-803191ac7d92" name="getIntTestSendMessageRequest"/>
+			<http:request method="POST" doc:name="Request" doc:id="e1094f80-8678-4857-a4ff-574704659eaf" config-ref="HTTP_API_TEST_Request_configuration" path="/whatsapp/message"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that Response Message is Not Null" doc:id="0310ebb2-f056-41d3-9e3b-8359aaf6e3a8" expression="#[payload]" is="#[MunitTools::notNullValue()]" message="Response Message is Null!!"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="IntegrationTest_GivenASendMessageRequestWhenPostAWhatsappMessageThenReturnValidHttpHeaders" description="IntegrationTest_GivenASendMessageRequestWhenPostAWhatsappMessageThenReturnValidHttpHeaders" doc:id="acd1234b-bd5f-4c4f-9c37-01a773057707" ignore="true">
+		<munit:enable-flow-sources >
+			<munit:enable-flow-source value="vl-twilio-whatsapp-experience-api-main" />
+			<munit:enable-flow-source value="post:\whatsapp\message:application\json:vl-twilio-whatsapp-experience-api-config" />
+		</munit:enable-flow-sources>
+		<munit:execution >
+			<flow-ref doc:name="getIntTestSendMessageRequest" doc:id="abb8fc7e-0a88-41c9-8439-4bbcd5d7b3fc" name="getIntTestSendMessageRequest" />
+			<http:request method="POST" doc:name="Request" doc:id="e1094f80-8678-4857-a4ff-574704659eaf" config-ref="HTTP_API_TEST_Request_configuration" path="/whatsapp/message"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that Http Status Code is the expected" doc:id="086da271-174e-4f6d-913f-f0e295fbe84c" expression="#[attributes.statusCode]" is="#[MunitTools::equalTo(201 default 200)]" message="Http Status Code is not the expected!!!" />
+			<munit-tools:assert-that doc:name="Assert that Http Reason Phrase is the expected" doc:id="d35442b2-602a-4dc4-adc9-d282a46c73bf" expression="#[attributes.reasonPhrase]" is="#[MunitTools::equalTo('Created' default '')]" message="Http Status Code is not the expected!!!" />
+			<munit-tools:assert-that doc:name="Assert that Http Content Type is the expected" doc:id="252f879b-3955-470c-8227-24253532948a" expression="#[attributes.headers.'content-type']" is="#[MunitTools::equalTo('application/json; charset=UTF-8' default '')]" message="Http Content Type is not the expected!!!" />
+		
+</munit:validation>
+	</munit:test>
+	<munit:test name="IntegrationTest_GivenASendMessageRequestWhenPostAWhatsappMessageThenCallsTwilioApiToSendMessage" description="IntegrationTest_GivenASendMessageRequestWhenPostAWhatsappMessageThenCallsTwilioApiToSendMessage" doc:id="acd1234b-bd5f-4c4f-9c37-01a773057707" ignore="true">
+		<munit:enable-flow-sources >
+			<munit:enable-flow-source value="vl-twilio-whatsapp-experience-api-main" />
+			<munit:enable-flow-source value="post:\whatsapp\message:application\json:vl-twilio-whatsapp-experience-api-config" />
+		</munit:enable-flow-sources>
+		<munit:execution >
+			<flow-ref doc:name="getIntTestSendMessageRequest" doc:id="abb8fc7e-0a88-41c9-8439-4bbcd5d7b3fc" name="getIntTestSendMessageRequest" />
+			<http:request method="POST" doc:name="Request" doc:id="e1094f80-8678-4857-a4ff-574704659eaf" config-ref="HTTP_API_TEST_Request_configuration" path="/whatsapp/message"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:verify-call doc:name="Verify call TwilioSendWhatsappMessage" doc:id="aa649cf3-d7b1-4ebe-ad59-6937b78ec829" processor="http:request" times="1" >
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute attributeName="doc:name" whereValue="TwilioSendWhatsappMessage" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		
+
+</munit:validation>
+	</munit:test>
+
+
+</mule>

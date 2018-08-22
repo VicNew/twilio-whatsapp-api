@@ -1,0 +1,132 @@
+{
+  "definitions": {}, 
+  "$schema": "http://json-schema.org/draft-07/schema#", 
+  "$id": "http://newtoms.example.com/root.json", 
+  "type": "object", 
+  "title": "The Root Schema", 
+  "required": [
+    "SmsMessageSid", 
+    "NumMedia", 
+    "SmsSid", 
+    "SmsStatus", 
+    "Body", 
+    "To", 
+    "NumSegments", 
+    "MessageSid", 
+    "AccountSid", 
+    "From", 
+    "ApiVersion"
+  ], 
+  "properties": {
+    "SmsMessageSid": {
+      "$id": "#/properties/SmsMessageSid", 
+      "type": "string", 
+      "title": "The Smsmessagesid Schema", 
+      "default": "", 
+      "examples": [
+        "SM6c8b11b628eae4b84c554f3cb698df5a"
+      ], 
+      "pattern": "^(.*)$"
+    }, 
+    "NumMedia": {
+      "$id": "#/properties/NumMedia", 
+      "type": "string", 
+      "title": "The Nummedia Schema", 
+      "default": "", 
+      "examples": [
+        "0"
+      ], 
+      "pattern": "^(.*)$"
+    }, 
+    "SmsSid": {
+      "$id": "#/properties/SmsSid", 
+      "type": "string", 
+      "title": "The Smssid Schema", 
+      "default": "", 
+      "examples": [
+        "SM6c8b11b628eae4b84c554f3cb698df5a"
+      ], 
+      "pattern": "^(.*)$"
+    }, 
+    "SmsStatus": {
+      "$id": "#/properties/SmsStatus", 
+      "type": "string", 
+      "title": "The Smsstatus Schema", 
+      "default": "", 
+      "examples": [
+        "received"
+      ], 
+      "pattern": "^(.*)$"
+    }, 
+    "Body": {
+      "$id": "#/properties/Body", 
+      "type": "string", 
+      "title": "The Body Schema", 
+      "default": "", 
+      "examples": [
+        "Test Response message from cell"
+      ], 
+      "pattern": "^(.*)$"
+    }, 
+    "To": {
+      "$id": "#/properties/To", 
+      "type": "string", 
+      "title": "The To Schema", 
+      "default": "", 
+      "examples": [
+        "whatsapp:+14155238886"
+      ], 
+      "pattern": "^(.*)$"
+    }, 
+    "NumSegments": {
+      "$id": "#/properties/NumSegments", 
+      "type": "string", 
+      "title": "The Numsegments Schema", 
+      "default": "", 
+      "examples": [
+        "1"
+      ], 
+      "pattern": "^(.*)$"
+    }, 
+    "MessageSid": {
+      "$id": "#/properties/MessageSid", 
+      "type": "string", 
+      "title": "The Messagesid Schema", 
+      "default": "", 
+      "examples": [
+        "SM6c8b11b628eae4b84c554f3cb698df5a"
+      ], 
+      "pattern": "^(.*)$"
+    }, 
+    "AccountSid": {
+      "$id": "#/properties/AccountSid", 
+      "type": "string", 
+      "title": "The Accountsid Schema", 
+      "default": "", 
+      "examples": [
+        "AC5e831f0f72d5487cc3b3288c46371ebd"
+      ], 
+      "pattern": "^(.*)$"
+    }, 
+    "From": {
+      "$id": "#/properties/From", 
+      "type": "string", 
+      "title": "The From Schema", 
+      "default": "", 
+      "examples": [
+        "whatsapp:+5214423349551"
+      ], 
+      "pattern": "^(.*)$"
+    }, 
+    "ApiVersion": {
+      "$id": "#/properties/ApiVersion", 
+      "type": "string", 
+      "title": "The Apiversion Schema", 
+      "default": "", 
+      "examples": [
+        "2010-04-01"
+      ], 
+      "pattern": "^(.*)$"
+    }
+  }
+}

@@ -1,0 +1,137 @@
+#%RAML 1.0
+baseUri: https://mocksvc.mulesoft.com/mocks/c83690bb-16eb-40ab-aa23-0027dd070ccb # 
+title: VL - Twilio Whatsapp Experience API
+version: 1.0.0
+
+schemas: 
+  apiErrorMessageSchema: !include schemas/ApiErrorMessageSchema.json
+  sendMessageRequestSchema: !include schemas/SendMessageRequestSchema.json
+  sendMessageResponseSchema: !include schemas/SendMessageResponseSchema.json
+  twilioReplyMessageSchema: !include schemas/TwilioReplyMessageSchema.json
+  twilioStatusMessageSchema: !include schemas/TwilioStatusMessageSchema.json
+
+/whatsapp:
+  /message:
+    post:
+      description: Send a whatsapp message to the given numbers
+      body: 
+        application/json:
+          schema: sendMessageRequestSchema
+          example: !include examples/SendMessageRequest.json
+      responses: 
+        201:
+          description: The message was created
+          body: 
+            application/json:
+              schema: sendMessageResponseSchema
+              example: !include examples/SendMessageResponse.json
+        400:
+          description: The request could not be understood by the server due to malformed syntax. The request could not be understood by the server due to malformed syntax.
+          body: 
+            application/json:
+              schema: apiErrorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+        401:
+          description: If the request already included Authorization credentials, then the 401 response indicates that authorization has been refused for those credentials.
+          body: 
+            application/json:
+              schema: apiErrorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+        404:
+          description: The server has not found anything matching the Request-URI.
+          body: 
+            application/json:
+              schema: apiErrorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+        406:
+          description: The resource identified by the request is only capable of generating response entities which have content characteristics not acceptable according to the accept headers sent in the request.
+          body: 
+            application/json:
+              schema: apiErrorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+        500:
+          description: The server encountered an unexpected condition which prevented it from fulfilling the request.
+          body: 
+            application/json:
+              schema: apiErrorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+  /replymessage:
+    post:
+      description: The web hook for inbound messages
+      responses: 
+        201:
+          description: The reply message was received
+          body: 
+            application/json:
+              schema: twilioReplyMessageSchema
+              example: !include examples/TwilioReplyMessage.json
+        400:
+          description: The request could not be understood by the server due to malformed syntax. The request could not be understood by the server due to malformed syntax.
+          body: 
+            application/json:
+              schema: apiErrorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+        401:
+          description: If the request already included Authorization credentials, then the 401 response indicates that authorization has been refused for those credentials.
+          body: 
+            application/json:
+              schema: apiErrorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+        404:
+          description: The server has not found anything matching the Request-URI.
+          body: 
+            application/json:
+              schema: apiErrorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+        406:
+          description: The resource identified by the request is only capable of generating response entities which have content characteristics not acceptable according to the accept headers sent in the request.
+          body: 
+            application/json:
+              schema: apiErrorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+        500:
+          description: The server encountered an unexpected condition which prevented it from fulfilling the request.
+          body: 
+            application/json:
+              schema: apiErrorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+  /statusmessage:
+    post:
+      description: The web hook in order to receive real time status updates for outbound messages
+      responses: 
+        201:
+          description: The status message was received
+          body: 
+            application/json:
+              schema: twilioStatusMessageSchema
+              example: !include examples/TwilioStatusMessage.json
+        400:
+          description: The request could not be understood by the server due to malformed syntax. The request could not be understood by the server due to malformed syntax.
+          body: 
+            application/json:
+              schema: apiErrorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+        401:
+          description: If the request already included Authorization credentials, then the 401 response indicates that authorization has been refused for those credentials.
+          body: 
+            application/json:
+              schema: apiErrorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+        404:
+          description: The server has not found anything matching the Request-URI.
+          body: 
+            application/json:
+              schema: apiErrorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+        406:
+          description: The resource identified by the request is only capable of generating response entities which have content characteristics not acceptable according to the accept headers sent in the request.
+          body: 
+            application/json:
+              schema: apiErrorMessageSchema
+              example: !include examples/ApiErrorMessage.json
+        500:
+          description: The server encountered an unexpected condition which prevented it from fulfilling the request.
+          body: 
+            application/json:
+              schema: apiErrorMessageSchema
+              example: !include examples/ApiErrorMessage.json

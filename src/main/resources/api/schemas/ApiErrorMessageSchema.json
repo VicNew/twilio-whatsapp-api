@@ -1,0 +1,104 @@
+{
+   "definitions":{
+
+   },
+   "$schema":"http://json-schema.org/draft-07/schema#",
+   "$id":"http://newtoms.example.com/root.json",
+   "type":"object",
+   "title":"The Root Schema",
+   "required":[
+      "error"
+   ],
+   "properties":{
+      "error":{
+         "$id":"#/properties/error",
+         "type":"object",
+         "title":"The Error Schema",
+         "required":[
+            "errors"
+         ],
+         "properties":{
+            "errors":{
+               "$id":"#/properties/error/properties/errors",
+               "type":"array",
+               "title":"The Errors Schema",
+               "items":{
+                  "$id":"#/properties/error/properties/errors/items",
+                  "type":"object",
+                  "title":"The Items Schema",
+                  "required":[
+                     "id",
+                     "code",
+                     "status",
+                     "title",
+                     "detail",
+                     "href"
+                  ],
+                  "properties":{
+                     "id":{
+                        "$id":"#/properties/error/properties/errors/items/properties/id",
+                        "type":"string",
+                        "title":"The Id Schema",
+                        "default":"",
+                        "examples":[
+                           "error1_firstName"
+                        ],
+                        "pattern":"^(.*)$"
+                     },
+                     "code":{
+                        "$id":"#/properties/error/properties/errors/items/properties/code",
+                        "type":"string",
+                        "title":"The Code Schema",
+                        "default":"",
+                        "examples":[
+                           "XB500"
+                        ],
+                        "pattern":"^(.*)$"
+                     },
+                     "status":{
+                        "$id":"#/properties/error/properties/errors/items/properties/status",
+                        "type":"string",
+                        "title":"The Status Schema",
+                        "default":"",
+                        "examples":[
+                           "400"
+                        ],
+                        "pattern":"^(.*)$"
+                     },
+                     "title":{
+                        "$id":"#/properties/error/properties/errors/items/properties/title",
+                        "type":"string",
+                        "title":"The Title Schema",
+                        "default":"",
+                        "examples":[
+                           "Error Title 1"
+                        ],
+                        "pattern":"^(.*)$"
+                     },
+                     "detail":{
+                        "$id":"#/properties/error/properties/errors/items/properties/detail",
+                        "type":"string",
+                        "title":"The Detail Schema",
+                        "default":"",
+                        "examples":[
+                           "Verbose,plain language description of the problem for the app developer with hints about how to fix it."
+                        ],
+                        "pattern":"^(.*)$"
+                     },
+                     "href":{
+                        "$id":"#/properties/error/properties/errors/items/properties/href",
+                        "type":"string",
+                        "title":"The Href Schema",
+                        "default":"",
+                        "examples":[
+                           "https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html"
+                        ],
+                        "pattern":"^(.*)$"
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+}
